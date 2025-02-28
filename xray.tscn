@@ -1,0 +1,149 @@
+[gd_scene load_steps=18 format=3 uid="uid://bj42uwtpldfng"]
+
+[ext_resource type="Script" path="res://xray.gd" id="1_cbjwy"]
+[ext_resource type="Shader" path="res://xray.gdshader" id="2_p5drt"]
+[ext_resource type="Texture2D" uid="uid://d2ockcb8l4b6" path="res://drackenstein_quarry_2k.png" id="2_vtux4"]
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_i1ypg"]
+panorama = ExtResource("2_vtux4")
+
+[sub_resource type="Sky" id="Sky_oc010"]
+sky_material = SubResource("PanoramaSkyMaterial_i1ypg")
+
+[sub_resource type="Environment" id="Environment_qaocx"]
+background_mode = 2
+sky = SubResource("Sky_oc010")
+reflected_light_source = 1
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_se6ce"]
+albedo_color = Color(0.583732, 0.0112833, 1.92523e-07, 1)
+
+[sub_resource type="PrismMesh" id="PrismMesh_jq1eq"]
+material = SubResource("StandardMaterial3D_se6ce")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jobhh"]
+albedo_color = Color(0.11753, 0.293001, 0.132922, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_mpl1r"]
+material = SubResource("StandardMaterial3D_jobhh")
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_ibkxl"]
+viewport_path = NodePath("SubViewport")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_v64iy"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("2_p5drt")
+shader_parameter/viewport_tex = SubResource("ViewportTexture_ibkxl")
+
+[sub_resource type="TorusMesh" id="TorusMesh_5cs7a"]
+
+[sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_330vv"]
+exposure_multiplier = 0.125
+
+[sub_resource type="Animation" id="Animation_pm62v"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("CameraMAIN:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(3.00264, 0.0103253, 2.64273)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("CameraMAIN:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(-0.00258133, 0.849065, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_fky7l"]
+resource_name = "camera_move"
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("CameraMAIN:position")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.466667, 0.766667),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector3(3.00264, 0.0103253, 2.64273), Vector3(1.553, 1, 5.098), Vector3(4.423, -0.072, 1.407)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("CameraMAIN:rotation")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.466667),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(-0.00258133, 0.849065, 0), Vector3(-0.237365, 0.115192, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_ex7ao"]
+_data = {
+"RESET": SubResource("Animation_pm62v"),
+"camera_move": SubResource("Animation_fky7l")
+}
+
+[node name="Xray" type="Node3D"]
+script = ExtResource("1_cbjwy")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, 0.75, -0.433013, 0, 0, 0)
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_qaocx")
+
+[node name="CameraMAIN" type="Camera3D" parent="."]
+transform = Transform3D(0.660685, -0.00193771, 0.750661, 0, 0.999997, 0.00258133, -0.750663, -0.00170545, 0.660683, 3.00264, 0.0103253, 2.64273)
+
+[node name="RemoteTransform3D" type="RemoteTransform3D" parent="CameraMAIN"]
+remote_path = NodePath("../../SubViewport/CameraXRAY")
+
+[node name="Some_obj_01" type="MeshInstance3D" parent="."]
+transform = Transform3D(1.52189, 0, 0, 0, 1.52189, 0, 0, 0, 1.52189, 0, 0, 0)
+mesh = SubResource("PrismMesh_jq1eq")
+
+[node name="Some_obj_02" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.788802, 0, 0, 0, 0.788802, 0, 0, 0, 0.788802, 0.693701, -0.0751684, 0.258575)
+mesh = SubResource("BoxMesh_mpl1r")
+
+[node name="XRay_obj" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.0319056, 0.364683, -0.321504, -0.485358, 0.0424634, 0, 0.0280209, 0.32028, 0.366076, 1.02377, 0, 1.17138)
+material_override = SubResource("ShaderMaterial_v64iy")
+mesh = SubResource("TorusMesh_5cs7a")
+
+[node name="SubViewport" type="SubViewport" parent="."]
+render_target_update_mode = 4
+
+[node name="CameraXRAY" type="Camera3D" parent="SubViewport"]
+transform = Transform3D(0.660685, -0.00193771, 0.750661, 0, 0.999997, 0.00258133, -0.750663, -0.00170545, 0.660683, 3.00264, 0.0103253, 2.64273)
+cull_mask = 0
+attributes = SubResource("CameraAttributesPractical_330vv")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_ex7ao")
+}
+autoplay = "camera_move"
+speed_scale = 0.2
